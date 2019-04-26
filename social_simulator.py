@@ -12,8 +12,8 @@ def take_coords(ev):
     global kropki
     kropki += [Kropka([ev.x, ev.y])]
     for e in kropki:
-        e.f = choice(kropki[:-1] if len(kropki)>1 else 0)
-        e.enemy = choice(kropki[:-1] if len(kropki)>1 else 0)
+        e.f = choice(kropki[:-1]) if len(kropki)>1 else kropki[0]
+        e.enemy = choice(kropki[:-1]) if len(kropki)>1 else kropki[0]
         
 canvas.bind('<Button-1>', take_coords)
 
@@ -43,24 +43,26 @@ class Kropka:
     def run(self, x=None):
         if x is None:
             x=self.enemy
-        if x:
-            dx=1/-(x.x-self.x)
-            dy=1/-(x.y-self.y)
+        if x and x.x != self.x and x.y != self.y:
+            dx=5/-(x.x-self.x)
+            dy=5/-(x.y-self.y)
             self.move(dx, dy)
             
         
         
 b=time()
 while 1:
-   # try:
+    try:
         if time() > b+.005:
             b = time()
             canvas.delete('all')
             for e in kropki:
                 e.run()
+                e.follow()
                 e.render()
         a.update_idletasks()
         a.update()
-    #except:
-     #   break
+    except:
+        break
+
 
