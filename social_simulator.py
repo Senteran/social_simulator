@@ -2,12 +2,15 @@ from tkinter import *
 from time import time
 from math import *
 from random import *
+
 a=Tk()
-canvas=Canvas(a, bg='black')
+canvas=Canvas(a, width=400, height=300, bg='black')
 canvas.pack()
-kropki=[]
 canvas.focus_set()
+
 state = False
+kropki=[]
+
 
 def take_coords(ev):
     global kropki
@@ -19,30 +22,34 @@ def take_coords(ev):
 def switch(ev):
     global state
     state = not state
-        
+    
 canvas.bind('<Button-1>', take_coords)
 canvas.bind('<space>', switch)
-    
 
 class Kropka:
-    def __init__(self, coords, f=None, enemy=None):
+    def __init__(self, coords, friend=None, enemy=None):
         self.x=coords[0]
         self.y=coords[1]
         self.render()
+        
     def __repr__(self):
-        return '<Kropka x='+str(self.x)+' y='+str(self.y)+'>'
+        return '<Kropka nr>'
+    
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        
     def render(self):
         canvas.create_oval(self.x - 5, self.y - 5,self.x + 5,self.y + 5, fill='white')
+        
     def follow(self, x=None):
         if x is None:
-            x = self.f
+            x = self.friend
         if x:
             dx=(x.x-self.x)/100
             dy=(x.y-self.y)/100
             self.move(dx, dy)
+            
     def run(self, x=None):
         if x is None:
             x=self.enemy
@@ -51,8 +58,6 @@ class Kropka:
             dy=5/-(x.y-self.y)
             self.move(dx, dy)
             
-        
-        
 b=time()
 while 1:
     try:
@@ -68,4 +73,3 @@ while 1:
         a.update()
     except:
         break
-
