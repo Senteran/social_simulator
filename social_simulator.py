@@ -7,16 +7,21 @@ canvas=Canvas(a, bg='black')
 canvas.pack()
 kropki=[]
 canvas.focus_set()
+state = False
 
 def take_coords(ev):
     global kropki
     kropki += [Kropka([ev.x, ev.y])]
     for e in kropki:
-        e.f = choice(kropki[:-1]) if len(kropki)>1 else kropki[0]
-        e.enemy = choice(kropki[:-1]) if len(kropki)>1 else kropki[0]
+        e.f = choice(kropki[:-1]) if len(kropki)>1 else None
+        e.enemy = choice(kropki[:-1]) if len(kropki)>1 else None
+
+def switch(ev):
+    global state
+    state = not state
         
 canvas.bind('<Button-1>', take_coords)
-
+canvas.bind('<space>', switch)
     
 
 class Kropka:
@@ -24,8 +29,6 @@ class Kropka:
         self.x=coords[0]
         self.y=coords[1]
         self.render()
-        self.f = f
-        self.enemy = enemy
     def __repr__(self):
         return '<Kropka x='+str(self.x)+' y='+str(self.y)+'>'
     def move(self, dx, dy):
@@ -53,16 +56,16 @@ class Kropka:
 b=time()
 while 1:
     try:
-        if time() > b+.005:
-            b = time()
-            canvas.delete('all')
-            for e in kropki:
-                e.run()
-                e.follow()
-                e.render()
+        if state:
+            if time() > b+.005:
+                b = time()
+                canvas.delete('all')
+                for e in kropki:
+                    e.run()
+                    e.follow()
+                    e.render()
         a.update_idletasks()
         a.update()
     except:
         break
-
 
