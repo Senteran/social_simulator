@@ -4,36 +4,47 @@ from math import *
 from random import *
 
 a=Tk()
-canvas=Canvas(a, width=400, height=300, bg='black')
+canvas=Canvas(a, width=500, height=400, bg='black')
 canvas.pack()
 canvas.focus_set()
 
 state = False
 kropki=[]
-
+b=time()
 
 def take_coords(ev):
     global kropki
     kropki += [Kropka([ev.x, ev.y])]
     for e in kropki:
-        e.f = choice(kropki[:-1]) if len(kropki)>1 else None
-        e.enemy = choice(kropki[:-1]) if len(kropki)>1 else None
+        while e == e.friend or e.friend == None:
+            e.friend = choice(kropki) if len(kropki)>1 else None
+        while e == e.enemy or e.enemy == None:
+            e.enemy = choice(kropki) if len(kropki)>1 else None
 
 def switch(ev):
     global state
     state = not state
+
+def debug(ev):
+    if len(kropki)>1:
+        for e in kropki:
+            print('<kropka nr '+str(kropki.index(e))+' przyjaciel: '+str(kropki.index(e.friend))+', wróg: '+str(kropki.index(e.enemy)))
+        print('\n')
     
 canvas.bind('<Button-1>', take_coords)
 canvas.bind('<space>', switch)
+canvas.bind('<r>', debug)
 
 class Kropka:
     def __init__(self, coords, friend=None, enemy=None):
         self.x=coords[0]
         self.y=coords[1]
         self.render()
+        self.friend=friend
+        self.enemy=enemy
         
     def __repr__(self):
-        return '<Kropka nr>'
+        return '<Nic tu nie ma>'
     
     def move(self, dx, dy):
         self.x += dx
@@ -58,7 +69,7 @@ class Kropka:
             dy=5/-(x.y-self.y)
             self.move(dx, dy)
             
-b=time()
+
 while 1:
     try:
         if state:
@@ -73,3 +84,4 @@ while 1:
         a.update()
     except:
         break
+
