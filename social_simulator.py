@@ -16,24 +16,47 @@ def take_coords(ev):
     global kropki
     kropki += [Kropka([ev.x, ev.y])]
     for e in kropki:
-        while e == e.friend or e.friend == None:
-            e.friend = choice(kropki) if len(kropki)>1 else None
-        while e == e.enemy or e.enemy == None:
-            e.enemy = choice(kropki) if len(kropki)>1 else None
+        e.friend = choice(kropki) if len(kropki)>1 else None
+        while e == e.friend:
+            e.friend = choice(kropki)
+        e.enemy = choice(kropki) if len(kropki)>2 else None
+        while (e == e.enemy or e.friend == e.enemy) and e.friend != None:
+            e.enemy = choice(kropki)
+
+            
+           # if e == e.friend.enemy
 
 def switch(ev):
     global state
     state = not state
 
 def debug(ev):
-    if len(kropki)>1:
-        for e in kropki:
-            print('<kropka nr '+str(kropki.index(e))+' przyjaciel: '+str(kropki.index(e.friend))+', wróg: '+str(kropki.index(e.enemy)))
-        print('\n')
+    for e in kropki:
+        print('<kropka nr '+str(kropki.index(e))+' przyjaciel:',end=' ')
+        if e.friend in kropki:
+            print(str(kropki.index(e.friend)),end=' ')
+        else:
+            print('None',end = ' ')
+        print(', wróg: ',end = ' ')
+        if e.enemy in kropki:
+            print(str(kropki.index(e.enemy)))
+        else:
+            print('None')
+    print('')
+
+def getcolor():
+    return ("#"+''.join([choice('0123456789ABCDEF') for j in range(6)]))
+
+"""def clear(ev):
+    for e in kropki:
+        kropki.remove(e)"""
+        
     
+  
 canvas.bind('<Button-1>', take_coords)
 canvas.bind('<space>', switch)
 canvas.bind('<r>', debug)
+#canvas.bind('<c>', clear)
 
 class Kropka:
     def __init__(self, coords, friend=None, enemy=None):
@@ -42,9 +65,10 @@ class Kropka:
         self.render()
         self.friend=friend
         self.enemy=enemy
+        self.color=getcolor()
         
     def __repr__(self):
-        return '<Nic tu nie ma>'
+        return str(kropki.index(self))
     
     def move(self, dx, dy):
         self.x += dx
@@ -73,7 +97,7 @@ class Kropka:
 while 1:
     try:
         if state:
-            if time() > b+.005:
+            if time() > b+.001:
                 b = time()
                 canvas.delete('all')
                 for e in kropki:
