@@ -60,10 +60,13 @@ while 1:
             if time() > b+.005:
                 b = time()
                 canvas.delete('all')
+                total = 0
                 for e in kropki:
                     e.run()
                     e.follow()
                     e.render()
+                    total = total + 1
+                    canvas.create_oval(1, 1, 1, 1, fill='white')
         a.update_idletasks()
         a.update()
     except:
